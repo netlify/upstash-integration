@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://sdk.netlify.com/config-schema.json
+config:
+  slug: integration-upstash-sdk
+  name: integration-upstash-sdk
+  description: -l
+  
+  scopes:
+    user: ["read", "write"]
