@@ -1,14 +1,13 @@
 import { NetlifyIntegrationUI } from "@netlify/sdk";
 
+import integrateDatabase from "./routes/integrateDatabase";
+import root from "./routes/root";
+
 const integrationUI = new NetlifyIntegrationUI("integration-upstash-sdk");
 
 const surface = integrationUI.addSurface("integrations-settings");
 
-const route = surface.addRoute("/");
-
-route.addText({
-    value: "Welcome to the integration-upstash-sdk integration UI. This is where you can create your own custom UI for your integration, which will be displayed in the Netlify UI."
-});
+surface.registerRoute(integrateDatabase);
+surface.registerRoute(root);
 
 export { integrationUI };
-

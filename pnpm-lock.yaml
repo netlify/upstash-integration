@@ -12,6 +12,11 @@ dependencies:
     specifier: ^5.2.2
     version: 5.2.2
 
+devDependencies:
+  '@netlify/functions':
+    specifier: ^2.3.0
+    version: 2.3.0
+
 packages:
 
   /@ampproject/remapping@2.2.1:
@@ -561,6 +566,14 @@ packages:
       is-promise: 4.0.0
     dev: false
 
+  /@netlify/functions@2.3.0:
+    resolution: {integrity: sha512-E3kzXPWMP/r1rAWhjTaXcaOT47dhEvg/eQUJjRLhD9Zzp0WqkdynHr+bqff4rFNv6tuXrtFZrpbPJFKHH0c0zw==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@netlify/serverless-functions-api': 1.9.0
+      is-promise: 4.0.0
+    dev: true
+
   /@netlify/integrations@0.6.0:
     resolution: {integrity: sha512-UYXhr6gArBppzbPINkd1gvRF7G6htbT04c05zGnfAEpc43pL5SNQIVHh7/KPuiic07xjSKAGUAezMz2QLenndg==}
     engines: {node: ^14.16.0 || >=16.0.0}
@@ -569,6 +582,11 @@ packages:
       '@types/chance': 1.1.6
       chance: 1.1.11
     dev: false
+
+  /@netlify/node-cookies@0.1.0:
+    resolution: {integrity: sha512-OAs1xG+FfLX0LoRASpqzVntVV/RpYkgpI0VrUnw2u0Q1qiZUzcPffxRK8HF3gc4GjuhG5ahOEMJ9bswBiZPq0g==}
+    engines: {node: ^14.16.0 || >=16.0.0}
+    dev: true
 
   /@netlify/sdk@1.10.0:
     resolution: {integrity: sha512-tu6WjAa9U3rRpswsKcuGpel/dasjQG5/jNJYFFAh+vQ2eSUXgCm87SY54gS/4c94WNf1aWzzukH1OekE0xYP2w==}
@@ -601,6 +619,14 @@ packages:
       - debug
       - supports-color
     dev: false
+
+  /@netlify/serverless-functions-api@1.9.0:
+    resolution: {integrity: sha512-Jq4uk1Mwa5vyxImupJYXPP+I5yYcp3PtguvXtJRutKdm9DPALXfZVtCQzBWMNdZiqVWCM3La9hvaBsPjSMfeug==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    dependencies:
+      '@netlify/node-cookies': 0.1.0
+      urlpattern-polyfill: 8.0.2
+    dev: true
 
   /@nodelib/fs.scandir@2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -2251,7 +2277,6 @@ packages:
 
   /is-promise@4.0.0:
     resolution: {integrity: sha512-hvpoI6korhJMnej285dSg6nu1+e6uxs7zG3BYAm5byqDsgJNWwxzM6z6iZiAgQR4TJ30JmBTOwqZUw3WlyH3AQ==}
-    dev: false
 
   /is-relative-url@3.0.0:
     resolution: {integrity: sha512-U1iSYRlY2GIMGuZx7gezlB5dp1Kheaym7zKzO1PV06mOihiWTXejLwm4poEJysPyXF+HtK/BEd0DVlcCh30pEA==}
@@ -3570,6 +3595,10 @@ packages:
       escalade: 3.1.1
       picocolors: 1.0.0
     dev: false
+
+  /urlpattern-polyfill@8.0.2:
+    resolution: {integrity: sha512-Qp95D4TPJl1kC9SKigDcqgyM2VDVO4RiJc2d4qe5GrYm+zbIQCWWKAFaJNQ4BhdFeDGwBmAxqJBwWSJDb9T3BQ==}
+    dev: true
 
   /util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
