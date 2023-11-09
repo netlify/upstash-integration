@@ -10,8 +10,10 @@ route.onLoad(async (state) => {
 
   const databases = (await databasesResponse.json()) as UpstashRedisDatabase[];
 
-  const databasePicker =
-    picker.getElementById<UIElementInputSelectOptions>("upstash_database");
+  const databasePicker = picker.getFormElementById<UIElementInputSelectOptions>(
+    "integrate-form",
+    "upstash-database",
+  );
 
   if (databasePicker) {
     databasePicker.options = databases.map((database) => ({

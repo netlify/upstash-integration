@@ -1,5 +1,10 @@
-import { SurfaceRoute, UIElementInputSelectOptions } from "@netlify/sdk";
+import {
+  SurfaceRoute,
+  UIElementCodeSnippetOptions,
+  UIElementInputSelectOptions,
+} from "@netlify/sdk";
 import { Status, UpstashRedisDatabase } from "../..";
+import { getEnvVarName } from "../../utils/netlify";
 
 const route = new SurfaceRoute("/");
 
@@ -19,7 +24,7 @@ route.onLoad(async (state) => {
     const databases = status.databases;
 
     const databasePicker =
-      picker.getElementById<UIElementInputSelectOptions>("upstash_database");
+      picker.getElementById<UIElementInputSelectOptions>("upstash-database");
 
     if (databasePicker) {
       databasePicker.options = databases?.map((database) => ({
@@ -28,8 +33,7 @@ route.onLoad(async (state) => {
       }));
     }
 
-    const integrateCard = picker.getElementById("integratate-card");
-
+    const integrateCard = picker.getElementById("use-integration-card");
     if (integrateCard) {
       integrateCard.display = "visible";
     }
@@ -55,11 +59,11 @@ route.addSection(
 
           const apiKey = picker.getFormInputValue(
             "connect-form",
-            "upstash_api_key",
+            "upstash-api-key",
           );
           const email = picker.getFormInputValue(
             "connect-form",
-            "upstash_email",
+            "upstash-email",
           );
 
           if (!apiKey || !email) {
@@ -81,11 +85,11 @@ route.addSection(
       },
       (form) => {
         form.addInputPassword({
-          id: "upstash_api_key",
+          id: "upstash-api-key",
           label: "Upstash API Key",
         });
         form.addInputText({
-          id: "upstash_email",
+          id: "upstash-email",
           label: "Upstash Email",
         });
       },
@@ -98,11 +102,73 @@ route.addSection(
       },
       (card) => {
         card.addInputSelect({
-          id: "upstash_database",
+          id: "upstash-database",
           label: "Upstash Database",
-          callback: () => {
-            alert("show snippet!");
+          callback: async (state, value) => {
+            const { picker, fetch } = state;
+
+            const getDatabasesResponse = await fetch("get-databases");
+
+            const databases =
+              (await getDatabasesResponse.json()) as UpstashRedisDatabase[];
+
+            const database = databases.find(
+              (database) => database.database_id === value,
+            );
+
+            if (!database) {
+              throw new Error("Database not found");
+            }
+
+            const redisDBUrlEnvVarName = getEnvVarName(
+              database.database_name,
+              "URL",
+            );
+            const redisDBTokenEnvVarName = getEnvVarName(
+              database.database_name,
+              "TOKEN",
+            );
+
+            const snippetCode = `
+import { Redis } from "https://deno.land/x/upstash_redis/mod.ts";
+
+export default async () => {
+  const redis = new Redis({
+    url: Deno.env.get("${redisDBUrlEnvVarName}"),
+    token: Deno.env.get("${redisDBTokenEnvVarName}"),
+  });
+
+  const counter = await redis.incr("edge_counter");
+
+  return new Response(counter);
+};
+`;
+            const snippetElement =
+              picker.getElementById<UIElementCodeSnippetOptions>(
+                "upstash-snippet",
+              );
+
+            if (snippetElement) {
+              snippetElement.code = snippetCode;
+              snippetElement.display = "visible";
+            }
           },
+        });
+        card.addCodeSnippet({
+          language: "js",
+          display: "hidden",
+          id: "upstash-snippet",
+          code: `
+import { Redis } from "https://deno.land/x/upstash_redis@v1.3.2/mod.ts";
+ 
+export default async () => {
+  // This will read the Upstash Redis URL from the environment variables we have created with this integration
+  const redis = Redis.fromEnv();
+  const counter = await redis.incr("edge_counter");
+  return new Response(counter);
+};
+
+`,
         });
       },
     );

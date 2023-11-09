@@ -27,6 +27,7 @@ const handler: UpstashIntegrationHandler = async (event, context) => {
 
     const status: Status = {
       connected: apiKey ? true : false,
+      databases: config.databases,
     };
     return {
       statusCode: 200,

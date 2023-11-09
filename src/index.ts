@@ -8,6 +8,7 @@ import {
 import connectHandler from "./handlers/connect";
 import getDatabasesHandler from "./handlers/getDatabases";
 import statusHandler from "./handlers/status";
+import integrateHander from "./handlers/integrate";
 
 export const siteConfigSchema = z.object({
   apiKey: z.string().nullable(),
@@ -36,7 +37,7 @@ export type UpstashRedisDatabase = {
 
 export type Status = {
   connected: boolean;
-  databases?: { name: string; id: string }[];
+  databases: { name: string; id: string }[] | null;
 };
 
 const integration = new NetlifyIntegration({
@@ -46,5 +47,6 @@ const integration = new NetlifyIntegration({
 integration.addApiHandler("connect", connectHandler);
 integration.addApiHandler("get-databases", getDatabasesHandler);
 integration.addApiHandler("status", statusHandler);
+integration.addApiHandler("integrate", integrateHander);
 
 export { integration };
