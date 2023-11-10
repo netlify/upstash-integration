@@ -38,6 +38,7 @@ export type UpstashRedisDatabase = {
 export type Status = {
   connected: boolean;
   databases: { name: string; id: string }[] | null;
+  error?: string;
 };
 
 const integration = new NetlifyIntegration({

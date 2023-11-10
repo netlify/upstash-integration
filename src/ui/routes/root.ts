@@ -1,5 +1,6 @@
 import {
   SurfaceRoute,
+  UIElementAlertOptions,
   UIElementCodeSnippetOptions,
   UIElementInputSelectOptions,
 } from "@netlify/sdk";
@@ -23,19 +24,38 @@ route.onLoad(async (state) => {
   } else {
     const databases = status.databases;
 
-    const databasePicker =
-      picker.getElementById<UIElementInputSelectOptions>("upstash-database");
+    if (databases?.length === 0) {
+      const addYourFirstCard = picker.getElementById("add-your-first-card");
+      if (addYourFirstCard) {
+        addYourFirstCard.display = "visible";
+      }
+    } else {
+      const databasePicker =
+        picker.getElementById<UIElementInputSelectOptions>("upstash-database");
 
-    if (databasePicker) {
-      databasePicker.options = databases?.map((database) => ({
-        label: database.name,
-        value: database.id,
-      }));
+      if (databasePicker) {
+        databasePicker.options = databases?.map((database) => ({
+          label: database.name,
+          value: database.id,
+        }));
+      }
+
+      const integrateCard = picker.getElementById("use-integration-card");
+      if (integrateCard) {
+        integrateCard.display = "visible";
+      }
     }
+  }
 
-    const integrateCard = picker.getElementById("use-integration-card");
-    if (integrateCard) {
-      integrateCard.display = "visible";
+  if (status.error) {
+    const errorCard =
+      picker.getElementById<UIElementAlertOptions>("error-card");
+    if (errorCard) {
+      errorCard.display = "visible";
+      if (status.error === "Unauthorized") {
+        errorCard.text =
+          "You entered an invalid API key or email when connecting to Upstash. Please try again.";
+      }
     }
   }
 });
@@ -47,6 +67,12 @@ route.addSection(
     description: "Easily configure your Upstash account",
   },
   (section) => {
+    section.addAlert({
+      id: "error-card",
+      display: "hidden",
+      level: "error",
+      text: "",
+    });
     section.addForm(
       {
         display: "hidden",
@@ -70,7 +96,7 @@ route.addSection(
             return;
           }
 
-          const response = await fetch("connect", {
+          const connectResponse = await fetch("connect", {
             method: "POST",
             body: JSON.stringify({
               apiKey,
@@ -78,8 +104,30 @@ route.addSection(
             }),
           });
 
-          if (response.status === 200) {
-            integrationNavigation.navigateTo("/integrate-database");
+          if (connectResponse.ok) {
+            const statusResponse = await fetch("status");
+
+            const status = (await statusResponse.json()) as Status;
+            const errorCard =
+              picker.getElementById<UIElementAlertOptions>("error-card");
+
+            if (status.error) {
+              if (errorCard) {
+                errorCard.display = "visible";
+                if (status.error === "Unauthorized") {
+                  errorCard.text = "Invalid API key or email";
+                }
+              }
+            } else {
+              if (!status.connected) {
+                if (errorCard) {
+                  errorCard.display = "visible";
+                  errorCard.text = "Something went wrong";
+                }
+              } else {
+                integrationNavigation.navigateTo("/");
+              }
+            }
           }
         },
       },
@@ -96,8 +144,28 @@ route.addSection(
     );
     section.addCard(
       {
+        id: "add-your-first-card",
+        title: "Add your first database",
+        display: "hidden",
+      },
+      (card) => {
+        card.addText({
+          value: "You haven't added any databases yet. ",
+        });
+        card.addButton({
+          title: "Add your first database",
+          id: "add-database-button",
+          callback: (state) => {
+            const { integrationNavigation } = state;
+            integrationNavigation.navigateTo("/integrate-database");
+          },
+        });
+      },
+    );
+    section.addCard(
+      {
         id: "use-integration-card",
-        title: "Use your Upstash integration",
+        title: "Your integrated databases",
         display: "hidden",
       },
       (card) => {
@@ -170,9 +238,22 @@ export default async () => {
 
 `,
         });
+
+        card.addButton({
+          title: "Add another database",
+          id: "add-database-button",
+          callback: (state) => {
+            const { integrationNavigation } = state;
+            integrationNavigation.navigateTo("/integrate-database");
+          },
+        });
       },
     );
   },
 );
+
+route.addDisableIntegrationSection({
+  integrationName: "Upstash",
+});
 
 export default route;

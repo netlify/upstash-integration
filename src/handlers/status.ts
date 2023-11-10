@@ -25,9 +25,27 @@ const handler: UpstashIntegrationHandler = async (event, context) => {
 
     const { apiKey } = config;
 
+    // If there is an API key, make a probe request to see if combo of email and api key is valid
+    let error: string | undefined;
+    if (apiKey) {
+      const response = await fetch(
+        "https://api.upstash.com/v2/redis/databases",
+        {
+          headers: {
+            Authorization: "Basic " + btoa(config.email + ":" + apiKey),
+          },
+        },
+      );
+
+      if (response.status !== 200) {
+        error = "Unauthorized";
+      }
+    }
+
     const status: Status = {
-      connected: apiKey ? true : false,
+      connected: apiKey && !error ? true : false,
       databases: config.databases,
+      error,
     };
     return {
       statusCode: 200,
