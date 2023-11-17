@@ -1,12 +1,6 @@
-import { HandlerEvent } from "@netlify/functions/dist/function/handler_event";
-import { HandlerContext } from "@netlify/functions/dist/function/handler_context";
-import { NetlifySdkContext } from "@netlify/sdk";
-import { UpstashRedisDatabase } from "..";
+import { UpstashIntegrationHandler, UpstashRedisDatabase } from "..";
 
-const handler = async (
-  event: HandlerEvent,
-  context: NetlifySdkContext & HandlerContext,
-) => {
+const handler: UpstashIntegrationHandler = async (event, context) => {
   if (event.body === null) {
     return {
       statusCode: 400,

@@ -1,16 +1,7 @@
 import { UpstashIntegrationHandler } from "..";
 
 const handler: UpstashIntegrationHandler = async (event, context) => {
-  if (event.body === null) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: "No body was provided",
-      }),
-    };
-  }
-
-  const { apiKey, email } = JSON.parse(event.body);
+  const { apiKey, email } = JSON.parse(event.body ?? "{}");
 
   const { siteId, client } = context;
 

@@ -1,8 +1,8 @@
 import {
-  SurfaceRoute,
-  UIElementAlertOptions,
-  UIElementCodeSnippetOptions,
-  UIElementInputSelectOptions,
+    SurfaceRoute,
+    UIElementAlertOptions,
+    UIElementCodeSnippetOptions,
+    UIElementInputSelectOptions,
 } from "@netlify/sdk";
 import { Status, UpstashRedisDatabase } from "../..";
 import { getEnvVarName } from "../../utils/netlify";
@@ -10,194 +10,194 @@ import { getEnvVarName } from "../../utils/netlify";
 const route = new SurfaceRoute("/");
 
 route.onLoad(async (state) => {
-  const { fetch, picker } = state;
+    const { fetch, picker } = state;
 
-  const statusResponse = await fetch("status");
+    const statusResponse = await fetch("status");
 
-  const status = (await statusResponse.json()) as Status;
+    const status = (await statusResponse.json()) as Status;
 
-  if (!status.connected) {
-    const connectForm = picker.getElementById("connect-form");
-    if (connectForm) {
-      connectForm.display = "visible";
-    }
-  } else {
-    const databases = status.databases;
-
-    if (databases?.length === 0) {
-      const addYourFirstCard = picker.getElementById("add-your-first-card");
-      if (addYourFirstCard) {
-        addYourFirstCard.display = "visible";
-      }
+    if (!status.connected) {
+        const connectForm = picker.getElementById("connect-form");
+        if (connectForm) {
+            connectForm.display = "visible";
+        }
     } else {
-      const databasePicker =
-        picker.getElementById<UIElementInputSelectOptions>("upstash-database");
+        const databases = status.databases;
 
-      if (databasePicker) {
-        databasePicker.options = databases?.map((database) => ({
-          label: database.name,
-          value: database.id,
-        }));
-      }
+        if (databases?.length === 0) {
+            const addYourFirstCard = picker.getElementById("add-your-first-card");
+            if (addYourFirstCard) {
+                addYourFirstCard.display = "visible";
+            }
+        } else {
+            const databasePicker =
+                picker.getElementById<UIElementInputSelectOptions>("upstash-database");
 
-      const integrateCard = picker.getElementById("use-integration-card");
-      if (integrateCard) {
-        integrateCard.display = "visible";
-      }
+            if (databasePicker) {
+                databasePicker.options = databases?.map((database) => ({
+                    label: database.name,
+                    value: database.id,
+                }));
+            }
+
+            const integrateCard = picker.getElementById("use-integration-card");
+            if (integrateCard) {
+                integrateCard.display = "visible";
+            }
+        }
     }
-  }
 
-  if (status.error) {
-    const errorCard =
-      picker.getElementById<UIElementAlertOptions>("error-card");
-    if (errorCard) {
-      errorCard.display = "visible";
-      if (status.error === "Unauthorized") {
-        errorCard.text =
-          "You entered an invalid API key or email when connecting to Upstash. Please try again.";
-      }
+    if (status.error) {
+        const errorCard =
+            picker.getElementById<UIElementAlertOptions>("error-card");
+        if (errorCard) {
+            errorCard.display = "visible";
+            if (status.error === "Unauthorized") {
+                errorCard.text =
+                    "You entered an invalid API key or email when connecting to Upstash. Please try again.";
+            }
+        }
     }
-  }
 });
 
 route.addSection(
-  {
-    id: "intro-section",
-    title: "Upstash",
-    description: "Easily configure your Upstash account",
-  },
-  (section) => {
-    section.addAlert({
-      id: "error-card",
-      display: "hidden",
-      level: "error",
-      text: "",
-    });
-    section.addForm(
-      {
-        display: "hidden",
-        id: "connect-form",
-        title: "Configure Upstash",
-        savingLabel: "Connecting",
-        saveLabel: "Connect",
-        onSubmit: async (state) => {
-          const { fetch, picker, integrationNavigation } = state;
-
-          const apiKey = picker.getFormInputValue(
-            "connect-form",
-            "upstash-api-key",
-          );
-          const email = picker.getFormInputValue(
-            "connect-form",
-            "upstash-email",
-          );
-
-          if (!apiKey || !email) {
-            return;
-          }
-
-          const connectResponse = await fetch("connect", {
-            method: "POST",
-            body: JSON.stringify({
-              apiKey,
-              email,
-            }),
-          });
-
-          if (connectResponse.ok) {
-            const statusResponse = await fetch("status");
-
-            const status = (await statusResponse.json()) as Status;
-            const errorCard =
-              picker.getElementById<UIElementAlertOptions>("error-card");
-
-            if (status.error) {
-              if (errorCard) {
-                errorCard.display = "visible";
-                if (status.error === "Unauthorized") {
-                  errorCard.text = "Invalid API key or email";
-                }
-              }
-            } else {
-              if (!status.connected) {
-                if (errorCard) {
-                  errorCard.display = "visible";
-                  errorCard.text = "Something went wrong";
-                }
-              } else {
-                integrationNavigation.navigateTo("/");
-              }
-            }
-          }
-        },
-      },
-      (form) => {
-        form.addInputPassword({
-          id: "upstash-api-key",
-          label: "Upstash API Key",
+    {
+        id: "intro-section",
+        title: "Upstash",
+        description: "Easily configure your Upstash account",
+    },
+    (section) => {
+        section.addAlert({
+            id: "error-card",
+            display: "hidden",
+            level: "error",
+            text: "",
         });
-        form.addInputText({
-          id: "upstash-email",
-          label: "Upstash Email",
-        });
-      },
-    );
-    section.addCard(
-      {
-        id: "add-your-first-card",
-        title: "Add your first database",
-        display: "hidden",
-      },
-      (card) => {
-        card.addText({
-          value: "You haven't added any databases yet. ",
-        });
-        card.addButton({
-          title: "Add your first database",
-          id: "add-database-button",
-          callback: (state) => {
-            const { integrationNavigation } = state;
-            integrationNavigation.navigateTo("/integrate-database");
-          },
-        });
-      },
-    );
-    section.addCard(
-      {
-        id: "use-integration-card",
-        title: "Your integrated databases",
-        display: "hidden",
-      },
-      (card) => {
-        card.addInputSelect({
-          id: "upstash-database",
-          label: "Upstash Database",
-          callback: async (state, value) => {
-            const { picker, fetch } = state;
+        section.addForm(
+            {
+                display: "hidden",
+                id: "connect-form",
+                title: "Configure Upstash",
+                savingLabel: "Connecting",
+                saveLabel: "Connect",
+                onSubmit: async (state) => {
+                    const { fetch, picker, integrationNavigation } = state;
 
-            const getDatabasesResponse = await fetch("get-databases");
+                    const apiKey = picker.getFormInputValue(
+                        "connect-form",
+                        "upstash-api-key",
+                    );
+                    const email = picker.getFormInputValue(
+                        "connect-form",
+                        "upstash-email",
+                    );
 
-            const databases =
-              (await getDatabasesResponse.json()) as UpstashRedisDatabase[];
+                    if (!apiKey || !email) {
+                        return;
+                    }
 
-            const database = databases.find(
-              (database) => database.database_id === value,
-            );
+                    const connectResponse = await fetch("connect", {
+                        method: "POST",
+                        body: JSON.stringify({
+                            apiKey,
+                            email,
+                        }),
+                    });
 
-            if (!database) {
-              throw new Error("Database not found");
-            }
+                    if (connectResponse.ok) {
+                        const statusResponse = await fetch("status");
 
-            const redisDBUrlEnvVarName = getEnvVarName(
-              database.database_name,
-              "URL",
-            );
-            const redisDBTokenEnvVarName = getEnvVarName(
-              database.database_name,
-              "TOKEN",
-            );
+                        const status = (await statusResponse.json()) as Status;
+                        const errorCard =
+                            picker.getElementById<UIElementAlertOptions>("error-card");
 
-            const snippetCode = `
+                        if (status.error) {
+                            if (errorCard) {
+                                errorCard.display = "visible";
+                                if (status.error === "Unauthorized") {
+                                    errorCard.text = "Invalid API key or email";
+                                }
+                            }
+                        } else {
+                            if (!status.connected) {
+                                if (errorCard) {
+                                    errorCard.display = "visible";
+                                    errorCard.text = "Something went wrong";
+                                }
+                            } else {
+                                integrationNavigation.navigateTo("/");
+                            }
+                        }
+                    }
+                },
+            },
+            (form) => {
+                form.addInputPassword({
+                    id: "upstash-api-key",
+                    label: "Upstash API Key",
+                });
+                form.addInputText({
+                    id: "upstash-email",
+                    label: "Upstash Email",
+                });
+            },
+        );
+        section.addCard(
+            {
+                id: "add-your-first-card",
+                title: "Add your first database",
+                display: "hidden",
+            },
+            (card) => {
+                card.addText({
+                    value: "You haven't added any databases yet. ",
+                });
+                card.addButton({
+                    title: "Add your first database",
+                    id: "add-database-button",
+                    callback: (state) => {
+                        const { integrationNavigation } = state;
+                        integrationNavigation.navigateTo("/integrate-database");
+                    },
+                });
+            },
+        );
+        section.addCard(
+            {
+                id: "use-integration-card",
+                title: "Your integrated databases",
+                display: "hidden",
+            },
+            (card) => {
+                card.addInputSelect({
+                    id: "upstash-database",
+                    label: "Upstash Database",
+                    callback: async (state, value) => {
+                        const { picker, fetch } = state;
+
+                        const getDatabasesResponse = await fetch("get-databases");
+
+                        const databases =
+                            (await getDatabasesResponse.json()) as UpstashRedisDatabase[];
+
+                        const database = databases.find(
+                            (database) => database.database_id === value,
+                        );
+
+                        if (!database) {
+                            throw new Error("Database not found");
+                        }
+
+                        const redisDBUrlEnvVarName = getEnvVarName(
+                            database.database_name,
+                            "URL",
+                        );
+                        const redisDBTokenEnvVarName = getEnvVarName(
+                            database.database_name,
+                            "TOKEN",
+                        );
+
+                        const snippetCode = `
 import { Redis } from "https://deno.land/x/upstash_redis/mod.ts";
 
 export default async () => {
@@ -211,49 +211,39 @@ export default async () => {
   return new Response(counter);
 };
 `;
-            const snippetElement =
-              picker.getElementById<UIElementCodeSnippetOptions>(
-                "upstash-snippet",
-              );
+                        const snippetElement =
+                            picker.getElementById<UIElementCodeSnippetOptions>(
+                                "upstash-snippet",
+                            );
 
-            if (snippetElement) {
-              snippetElement.code = snippetCode;
-              snippetElement.display = "visible";
-            }
-          },
-        });
-        card.addCodeSnippet({
-          language: "js",
-          display: "hidden",
-          id: "upstash-snippet",
-          code: `
-import { Redis } from "https://deno.land/x/upstash_redis@v1.3.2/mod.ts";
- 
-export default async () => {
-  // This will read the Upstash Redis URL from the environment variables we have created with this integration
-  const redis = Redis.fromEnv();
-  const counter = await redis.incr("edge_counter");
-  return new Response(counter);
-};
+                        if (snippetElement) {
+                            snippetElement.code = snippetCode;
+                            snippetElement.display = "visible";
+                        }
+                    },
+                });
+                card.addCodeSnippet({
+                    language: "js",
+                    display: "hidden",
+                    id: "upstash-snippet",
+                    code: "",
+                });
 
-`,
-        });
-
-        card.addButton({
-          title: "Add another database",
-          id: "add-database-button",
-          callback: (state) => {
-            const { integrationNavigation } = state;
-            integrationNavigation.navigateTo("/integrate-database");
-          },
-        });
-      },
-    );
-  },
+                card.addButton({
+                    title: "Add another database",
+                    id: "add-database-button",
+                    callback: (state) => {
+                        const { integrationNavigation } = state;
+                        integrationNavigation.navigateTo("/integrate-database");
+                    },
+                });
+            },
+        );
+    },
 );
 
 route.addDisableIntegrationSection({
-  integrationName: "Upstash",
+    integrationName: "Upstash",
 });
 
 export default route;
