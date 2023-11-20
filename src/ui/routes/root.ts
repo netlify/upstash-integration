@@ -5,7 +5,7 @@ import {
     UIElementInputSelectOptions,
 } from "@netlify/sdk";
 import { Status, UpstashRedisDatabase } from "../..";
-import { getEnvVarName } from "../../utils/netlify";
+import { generateCodeSnippet, getEnvVarName } from "../../utils/netlify";
 
 const route = new SurfaceRoute("/");
 
@@ -197,27 +197,13 @@ route.addSection(
                             "TOKEN",
                         );
 
-                        const snippetCode = `
-import { Redis } from "https://deno.land/x/upstash_redis/mod.ts";
-
-export default async () => {
-  const redis = new Redis({
-    url: Deno.env.get("${redisDBUrlEnvVarName}"),
-    token: Deno.env.get("${redisDBTokenEnvVarName}"),
-  });
-
-  const counter = await redis.incr("edge_counter");
-
-  return new Response(counter);
-};
-`;
                         const snippetElement =
                             picker.getElementById<UIElementCodeSnippetOptions>(
                                 "upstash-snippet",
                             );
 
                         if (snippetElement) {
-                            snippetElement.code = snippetCode;
+                            snippetElement.code = generateCodeSnippet(redisDBUrlEnvVarName, redisDBTokenEnvVarName);
                             snippetElement.display = "visible";
                         }
                     },
