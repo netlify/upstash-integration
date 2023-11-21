@@ -59,4 +59,5 @@ Now that we’ve built the flow for integrating with a users’ Upstash database
 
 ## And that's it
 
+![image](./src/assets/CompletedIntegration.png)
 TODO - Add DTN button, links to docs and ways to test out the integration
