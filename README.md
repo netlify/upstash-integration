@@ -37,21 +37,21 @@ In our `/` route, we need to collect the API key and email address of the user f
 
 ## Adding API handlers
 
-Next we [add](./src/handlers/connect.ts) and [register](./src/index.ts#L48) an API handler to receive the configuration from the above form with the `integration.addApiHandler()` method and make use of the NetlifyIntegrationClient that is made available in the context argument that is passed to our API handlers.
+Next we [create](./src/handlers/connect.ts) and [register](./src/index.ts#L48) an API handler to receive the configuration from the above form with the `integration.addApiHandler()` method and make use of the NetlifyIntegrationClient that is made available in the context argument that is passed to our API handlers.
 
-We call this API handler from the configuration form we created and refresh the page once we get an `ok` response from the API handler.
+We [call](./src/ui/routes/root.ts#L99) this API handler from the configuration form we created and refresh the page once we get an `ok` response from the API handler.
 
 ## Navigating to a new route
 
-Once a user has connected to their Upstash account via the integration, we are able to create a call to action (CTA) to navigate users to a new route to start integrating with their Upstash Redis database. This means, we need to conditionally render elements on the page based on whether the user is connected or not. The `Add database` CTA is placed within a [card](./.src/ui/routes/root.ts#L165), but we keep the display property of this element set to `hidden` so that we can add some logic in the next step to show this conditionally. We also make our `connect-form` hidden by default too.
+Once a user has connected to their Upstash account via the integration, we are able to create a call to action (CTA) to navigate users to a new route to start integrating with their Upstash Redis database. This means, we need to conditionally render elements on the page based on whether the user is connected or not. The `Add database` CTA is placed within a [card](./src/ui/routes/root.ts#L165), but we keep the display property of this element set to `hidden` so that we can add some logic in the next step to show this conditionally. We also make our `connect-form` [hidden](./src/ui/routes/root.ts#L78) by default too.
 
 ## Integrating with a database
 
-In our `/integrate-database` route, we allow users to select from a dropdown of their Redis databases they have created in Upstash. We add a form with an id of `integrate-form` with a [select](./src/ui/routes/integrate-database.ts#L76) field that will hold the databases the user can integrate with. As with our `/` route, this route will also need an `onLoad` [function](./src/ui/routes/integrate-database.ts#L10) to populate this select field with databases from the users’ Upstash account.
+In our `/integrate-database` route, we allow users to select from a dropdown of their Redis databases they have created in Upstash. We add a form with an id of `integrate-form` with a [select](./src/ui/routes/integrateDatabase.ts#L76) field that will hold the databases the user can integrate with. As with our `/` route, this route will also need an `onLoad` [function](./src/ui/routes/integrateDatabase.ts#L10) to populate this select field with databases from the users’ Upstash account.
 
 The `onLoad` makes a call to a [new API handler](./src/handlers/getDatabases.ts) called `get-databases` which contains the logic to use our saved integration context to make an authenticated call to Upstash to get the users' Redis databaes. The response is then use to [populate the options](./src/handlers/getDatabaes.ts#L19) in the select field.
 
-When we submit our `integrate-form`, we can effectively integrate the database by saving the Upstash endpoint and token as environment variables for the user and storing the `id` of the database we have integrated within our integration context. This is achieved by [calling another API handler](./src/ui/routes/integrate-database.ts#L60) called `integrate` which is responsible for updating our integration context and saving the environment variables.
+When we submit our `integrate-form`, we can effectively integrate the database by saving the Upstash endpoint and token as environment variables for the user and storing the `id` of the database we have integrated within our integration context. This is achieved by [calling another API handler](./src/handlers/integrate.ts#L60) called `integrate` which is responsible for updating our integration context and saving the environment variables.
 
 ## Wiring it all together
 
