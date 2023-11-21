@@ -64,4 +64,6 @@ Now that we’ve built the flow for integrating with a users’ Upstash database
 ## And that's it
 
 ![image](./src/assets/CompletedIntegration.png)
-TODO - Add DTN button, links to docs and ways to test out the integration
+
+If you want to use this integration as a template for building your own or just want to deploy this integration yourself so you can see it working, just click the deploy to Netlify button below.
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/integration/start/deploy?repository=https://github.com/netlify/sdk-build-event-handler-template)
