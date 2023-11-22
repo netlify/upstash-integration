@@ -1,4 +1,5 @@
 import { UpstashIntegrationHandler } from "..";
+import { response } from "../utils";
 
 const handler: UpstashIntegrationHandler = async (event, context) => {
   const { apiKey, email } = JSON.parse(event.body ?? "{}");
@@ -6,30 +7,15 @@ const handler: UpstashIntegrationHandler = async (event, context) => {
   const { siteId, client } = context;
 
   if (!siteId) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: "No site id was provided",
-      }),
-    };
+    return response(400, "No site id was provided");
   }
 
   if (!apiKey) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: "No api key was provided",
-      }),
-    };
+    return response(400, "No api key was provided");
   }
 
   if (!email) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: "No email was provided",
-      }),
-    };
+    return response(400, "No email was provided");
   }
 
   try {
@@ -39,20 +25,10 @@ const handler: UpstashIntegrationHandler = async (event, context) => {
       databases: [],
     });
   } catch {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        message: "Something went wrong",
-      }),
-    };
+    return response(500, "Something went wrong");
   }
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: "Successfully connected",
-    }),
-  };
+  return response(200, "Successfully connected");
 };
 
 export default handler;

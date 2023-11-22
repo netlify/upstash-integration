@@ -1,24 +1,15 @@
 import { Status, UpstashIntegrationHandler } from "..";
+import { response } from "../utils";
 
 const handler: UpstashIntegrationHandler = async (event, context) => {
   if (event.body === null) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: "No body was provided",
-      }),
-    };
+    return response(400, "No body was provided");
   }
 
   const { siteId, client } = context;
 
   if (!siteId) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: "No site id was provided",
-      }),
-    };
+    return response(400, "No site id was provided");
   }
   try {
     const { config } = await client.getSiteIntegration(siteId);
@@ -47,17 +38,9 @@ const handler: UpstashIntegrationHandler = async (event, context) => {
       databases: config.databases,
       error,
     };
-    return {
-      statusCode: 200,
-      body: JSON.stringify(status),
-    };
+    return response(200, JSON.stringify(status));
   } catch {
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        connected: false,
-      }),
-    };
+    return response(200, JSON.stringify({ connected: false }));
   }
 };
 

@@ -26,3 +26,8 @@ export const config = {
   path: "/counter",
 };
 `;
+
+export const response = (statusCode: number, message: string) => ({
+  statusCode,
+  message,
+});

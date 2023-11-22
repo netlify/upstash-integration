@@ -1,15 +1,10 @@
 import { EnvVarRequest } from "@netlify/sdk/client";
 import { UpstashIntegrationHandler, UpstashRedisDatabase } from "..";
-import { getEnvVarName } from "../utils/netlify";
+import { response, getEnvVarName } from "../utils";
 
 const handler: UpstashIntegrationHandler = async (event, context) => {
   if (event.body === null) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: "No body was provided",
-      }),
-    };
+    return response(400, "No body was provided");
   }
 
   const { databaseId, databaseName } = JSON.parse(event.body);
@@ -17,21 +12,11 @@ const handler: UpstashIntegrationHandler = async (event, context) => {
   const { siteId, client, teamId } = context;
 
   if (!siteId) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: "No site id was provided",
-      }),
-    };
+    return response(400, "No site id was provided");
   }
 
   if (!teamId) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: "No team id was provided",
-      }),
-    };
+    return response(400, "No team id was provided");
   }
 
   try {
@@ -77,20 +62,10 @@ const handler: UpstashIntegrationHandler = async (event, context) => {
       variables: envVarRequests,
     });
   } catch {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        message: "Something went wrong",
-      }),
-    };
+    return response(500, "Something went wrong");
   }
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: "Successfully integrated",
-    }),
-  };
+  return response(200, "Successfully integrated");
 };
 
 export default handler;
