@@ -142,6 +142,10 @@ route.addSection(
         display: "hidden",
       },
       (card) => {
+        card.addText({
+          value:
+            "Select a database to view a code snippet for connecting to it.",
+        });
         card.addInputSelect({
           id: "upstash-database",
           label: "Upstash Database",
