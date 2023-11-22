@@ -5,7 +5,7 @@ import {
   UIElementInputSelectOptions,
 } from "@netlify/sdk";
 import { Status, UpstashRedisDatabase } from "../..";
-import { generateCodeSnippet, getEnvVarName } from "../../utils/netlify";
+import { generateCodeSnippet, getEnvVarName } from "../../utils";
 
 const route = new SurfaceRoute("/");
 
