@@ -145,7 +145,7 @@ route.addSection(
         card.addInputSelect({
           id: "upstash-database",
           label:
-            "Select a database to view a code snippet for connecting to it.",
+            "Select a database to view a code snippet for connecting to it",
           callback: async (state, value) => {
             const { picker, fetch } = state;
 
