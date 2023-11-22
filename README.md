@@ -47,7 +47,7 @@ We [call](./src/ui/routes/root.ts#L92) this API handler from the configuration f
 
 ## Navigating to a new route
 
-Once a user has connected to their Upstash account via the integration, we are able to create a call to action (CTA) to navigate users to a new route to start integrating with their Upstash Redis database. This means, we need to conditionally render elements on the page based on whether the user is connected or not. The `Add database` CTA is placed within a [card](./src/ui/routes/root.ts#L194), but we keep the display property of parent card element set to `hidden` so that we can add some logic in the next step to show this conditionally. We also make our `connect-form` [hidden](./src/ui/routes/root.ts#L71) by default too.
+Once a user has connected to their Upstash account via the integration, we are able to create a call to action (CTA) to navigate users to a new route to start integrating with their Upstash Redis database. This means, we need to conditionally render elements on the page based on whether the user is connected or not. The `Add database` CTA is placed within a [card](./src/ui/routes/root.ts#L195), but we keep the display property of parent card element set to `hidden` so that we can add some logic in the next step to show this conditionally. We also make our `connect-form` [hidden](./src/ui/routes/root.ts#L71) by default too.
 
 To make elements conditionally render with the SDK, we use the `onLoad` function that is made available to each surface route. For this this `onLoad` function to know the current context of a users’ integration, we will need to create and [make a call](./src/ui/routes/root.ts#L15) to a `status` API handler. This handler will simply tell us, if we’re connected and will also return a list of databases that have been integrated.
 
@@ -63,7 +63,7 @@ When we submit our `integrate-form`, we can effectively integrate the database b
 
 ## Wiring it all together
 
-Now that we’ve built the flow for integrating with a users’ Upstash databases, we can give them helpful code snippets in the integration UI. This will help guide users in quickly making use of the integration and the environment variables we have created. We add a [dropdown](./src/ui/routes/root.ts#L145) in our `/` route which will show all of the integrated caches and when an option is selected from this dropdown, we make our [code snippet element](./src/ui/routes/root.ts#L183) visible.
+Now that we’ve built the flow for integrating with a users’ Upstash databases, we can give them helpful code snippets in the integration UI. This will help guide users in quickly making use of the integration and the environment variables we have created. We add a [dropdown](./src/ui/routes/root.ts#L145) in our `/` route which will show all of the integrated caches and when an option is selected from this dropdown, we make our [code snippet element](./src/ui/routes/root.ts#L184) visible.
 
 ## And that's it
 
