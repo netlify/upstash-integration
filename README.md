@@ -18,7 +18,7 @@ For this integration the flow should be relatively simple.
 
 As we will be storing the users' Upstash configuration with the [Integration API](https://sdk.netlify.com/integration-api/), we need to define the shape of our integration context and we do this by creating a [zod](https://zod.dev/) schema to define the shape of this context. For this integration, our config will be relatively simple and can be found [here](./src/index.ts#L12)
 
-We can then define a [type definition](./src/index.ts#L26) that all of our API handlers will use, so that when using the context argument we know what the object will look like.
+We can then define a [type definition](./src/index.ts#L30) that all of our API handlers will use, so that when using the context argument we know what the object will look like.
 
 ## Our routes
 
@@ -37,7 +37,7 @@ In our `/` route, we need to collect the API key and email address of the user f
 
 ## Adding API handlers
 
-Next we [create](./src/handlers/connect.ts) and [register](./src/index.ts#L48) an API handler to receive the configuration from the above form with the `integration.addApiHandler()` method and make use of the NetlifyIntegrationClient that is made available in the context argument that is passed to our API handlers.
+Next we [create](./src/handlers/connect.ts) and [register](./src/index.ts#L51) an API handler to receive the configuration from the above form with the `integration.addApiHandler()` method and make use of the NetlifyIntegrationClient that is made available in the context argument that is passed to our API handlers.
 
 We [call](./src/ui/routes/root.ts#L92) this API handler from the configuration form we created and refresh the page once we get an `ok` response from the API handler.
 

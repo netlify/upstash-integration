@@ -23,9 +23,12 @@ export const siteConfigSchema = z.object({
     .nullable(),
 });
 
-export type UpstashIntegrationHandler = FunctionHandler<
-  NetlifySdkContext<z.infer<typeof siteConfigSchema>>
+type UpstashIntegrationContext = NetlifySdkContext<
+  z.infer<typeof siteConfigSchema>
 >;
+
+export type UpstashIntegrationHandler =
+  FunctionHandler<UpstashIntegrationContext>;
 
 export type UpstashRedisDatabase = {
   database_id: string;
