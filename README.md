@@ -14,13 +14,17 @@ For this integration the flow should be relatively simple.
 2. Create a flow for the user to select and integrate with an Upstash Redis database. This will trigger the logic to create all the necessary environment variables to connect to this database
 3. Once an Upstash Redis database has been integrated with, the user will be able to copy code snippets that show them how to connect to that database instance via their application
 
+## Previewing our integration
+
+Whilst we write this integration, we are going to run a local server to preview the integration. We can run this with `npm run preview` and visiting `https://app.netlify.com/ui/preview/netlify-upstash-integration?server=http://localhost:8899`. On this preview page, you can select a site that you want to test the integration on and refresh the preview each time you introduce new elements to the integration.
+
 ## Defining our integration context
 
 As we will be storing the users' Upstash configuration with the [Integration API](https://sdk.netlify.com/integration-api/), we need to define the shape of our integration context and we do this by creating a [zod](https://zod.dev/) schema to define the shape of this context. For this integration, our config will be relatively simple and can be found [here](./src/index.ts#L12)
 
 We can then define a [type definition](./src/index.ts#L30) that all of our API handlers will use, so that when using the context argument we know what the object will look like.
 
-## Our routes
+## Configuring routes
 
 Based on the designs, we are going to have two routes:
 
