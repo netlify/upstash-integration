@@ -36,6 +36,7 @@ route.addSection(
         title: "Select your Redis database",
         savingLabel: "Integrating",
         saveLabel: "Integrate",
+        hideCancel: true,
         onSubmit: async (state) => {
           const { fetch, picker, integrationNavigation } = state;
 
