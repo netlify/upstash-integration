@@ -3,6 +3,7 @@ import {
   UIElementAlertOptions,
   UIElementCodeSnippetOptions,
   UIElementInputSelectOptions,
+  UIElementInputTextOptions,
 } from "@netlify/sdk";
 import { Status, UpstashRedisDatabase } from "../..";
 import { generateCodeSnippet, getEnvVarName } from "../../utils";
@@ -37,6 +38,23 @@ route.onLoad(async (state) => {
     const integrateCard = picker.getElementById("use-integration-card");
     if (integrateCard) {
       integrateCard.display = "visible";
+    }
+
+    if (databases?.length) {
+      const dropdown = picker.getElementById("upstash-database");
+      if (dropdown) {
+        dropdown.display = "visible";
+      }
+    } else {
+      const databaseDescription =
+        picker.getElementById<UIElementInputTextOptions>(
+          "upstash-database-description",
+        );
+
+      if (databaseDescription) {
+        databaseDescription.value =
+          "Integrate your first database and we will create your environment variables for you.";
+      }
     }
   }
 
@@ -125,6 +143,10 @@ route.addSection(
         },
       },
       (form) => {
+        form.addText({
+          value:
+            "You can find your Upstash API key in your [account settings](https://console.upstash.com/account/api)",
+        });
         form.addInputPassword({
           id: "upstash-api-key",
           label: "Upstash API Key",
@@ -142,10 +164,15 @@ route.addSection(
         display: "hidden",
       },
       (card) => {
+        card.addText({
+          id: "upstash-database-description",
+          value:
+            "Select a database and view a code snippet that will help you connect to it using a Netlify edge function and the environment variables have created for you.",
+        });
         card.addInputSelect({
           id: "upstash-database",
-          label:
-            "Select a database to view a code snippet for connecting to it",
+          display: "hidden",
+          label: "Select a database",
           callback: async (state, value) => {
             const { picker, fetch } = state;
 
@@ -193,7 +220,7 @@ route.addSection(
         });
 
         card.addButton({
-          title: "Add database",
+          title: "Integrate database",
           id: "add-database-button",
           callback: (state) => {
             const { integrationNavigation } = state;
