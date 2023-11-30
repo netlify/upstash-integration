@@ -29,6 +29,7 @@ route.onLoad(async (state) => {
       picker.getElementById<UIElementInputSelectOptions>("upstash-database");
 
     if (databasePicker) {
+      // Populate dropdown with integrated databases
       databasePicker.options = databases?.map((database) => ({
         label: database.name,
         value: database.id,
@@ -40,6 +41,7 @@ route.onLoad(async (state) => {
       integrateCard.display = "visible";
     }
 
+    // Only show dropdown if there are databases, otherwise show alternative description
     if (databases?.length) {
       const dropdown = picker.getElementById("upstash-database");
       if (dropdown) {
